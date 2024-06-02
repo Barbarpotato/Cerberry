@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block cdn %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+{%endblock %}
+
+{% block css %}
+<!-- Style Section -->
+<style>
+    @media only screen and (min-width: 800px) {
+
+        #header,
+        #features {
+            padding-inline: 200px;
+        }
+    }
+
+    body {
+        padding-top: 56px;
+        background-color: #222438;
+        color: #ffffff;
+    }
+
+    main {
+        flex: 1;
+    }
+
+    header {
+        background-color: #222438;
+        color: #ffffff;
+        padding: 80px 0;
+    }
+
+    section {
+        padding: 60px 0;
+    }
+
+    #footer {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+
+    .custom-accordion-button {
+        background-color: #f54653;
+        /* Change this to your desired color */
+        color: #fff;
+        /* Change this to your desired text color */
+    }
+</style>
+
+{% endblock %}
+
+{% block title_navigation %} Cerberry Blogs {% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<header id="header" class="text-center">
+    <h1 class="display-4">Welcome To <a style="color: #f54653; font-weight: bold;"> Cerberry Blogs</a></h1>
+    <p class="lead">Use this service to build new blog, see the blog and remove the blog from firestore</p>
+</header>
+
+<!-- Features Section -->
+<section id="features">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 style="color: #f54653; font-weight: bold;">API Endpoint List</h2>
+                <p class="lead">Explore All The Available Endpoint for blogs API
+                </p>
+            </div>
+        </div>
+
+        <div class="accordion" data-bs-theme="dark" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button custom-accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        /blogs/all
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show dark" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Get all Blogs data From Firestore
+                            <code>Return JSON data as a response. </code>
+                            <a href="/blogs/all">Visit This API</a>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button custom-accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                        aria-controls="collapseTwo">
+                        /blog/{id}
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Get specific Blog data based on blog id.</strong>
+                        <code>Return JSON data as a response</code>.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button custom-accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false"
+                        aria-controls="collapseThree">
+                        /blog/create
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Create Blog data content. There are specific body request needed in this
+                            endpoint:</strong><br>
+                        <code>
+                                {
+                                    "title":"the title of the blog",
+                                    "description": "the content of description blog",
+                                    "image" :"the image url of the blog",
+                                    "image_alt": "image alt of the blog"
+                                }
+                            </code><br>
+                        <strong>Return JSON data as a response, This is an example of the response:</strong><br>
+                        <code>
+                            {
+                            "blog_id_created": 3,
+                            "message": "Successfully created a document"
+                            }
+                            </code>.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button custom-accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false"
+                        aria-controls="collapseFour">
+                        /blog/create/view
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Render Create View Template to create new blog via backend interface.</strong>
+                        <code>Return HTML Content.</code>
+                        <a href="/blog/create/view">Visit This API</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button custom-accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false"
+                        aria-controls="collapseFive">
+                        /blog/delete/{id}
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Delete Blog Data based on its id</strong>
+                        <code>Return JSON data as a response</code>.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

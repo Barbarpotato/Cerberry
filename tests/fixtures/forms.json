@@ -1,0 +1,11 @@
+{
+    "INVALID_CONTACT_US_DATA": {
+        "name": "test",
+        "message": "test"
+    },
+    "VALID_CONTACT_US_DATA": {
+        "name": "test",
+        "email": "test",
+        "message": "test"
+    }
+}

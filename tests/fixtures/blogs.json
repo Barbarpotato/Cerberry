@@ -1,0 +1,50 @@
+{
+    "ALL_BLOGS": [
+        {
+            "blog_id": "586f3729-120e-4016-89e0-c620d360ce2d",
+            "description": "<h1>Optimizing Your Content for Top-notch SEO</h1><h2>Introduction</h2><p>SEO (Search Engine Optimization) is a crucial practice in the digital world to enhance the visibility and ranking of your web pages on search engines like Google. By understanding the fundamental principles of SEO, you can increase the likelihood of your content appearing in search results, attract more visitors, and enhance your online presence.</p><h2>1. Understanding Keywords</h2><p>The key to SEO lies in keywords or keyword phrases that potential visitors use when searching for information on search engines. Conduct keyword research to identify terms relevant to your business or topic. Utilize tools like Google Keyword Planner to determine keywords with high search volume.</p><h2>2. High-Quality Content</h2><p>Search engines prioritize content that provides value to users. Ensure your content is informative, relevant, and meets the needs of your audience. Use engaging writing styles and avoid duplicate content. High-quality content not only captivates readers but is also favored by search engines.</p><h2>3. SEO-Friendly URL Structure</h2><p>It's crucial to have URLs that are easily understood by both humans and search engines. Use a clear and descriptive URL structure that is concise and relevant to the content. For example: <code>www.examplewebsite.com/seo-article</code>.</p><h2>4. Heading and Subheading Usage</h2><p>Break down your content into easily digestible sections using headings (H1, H2, H3, etc.) and subheadings. This helps search engines understand the structure and hierarchy of your content. Make sure to include keywords in headings to provide additional signals to search engines.</p><h2>5. Image Optimization</h2><p>Images can enhance the visual appeal of your content but also require SEO optimization. Ensure each image has a descriptive alt attribute containing relevant keywords. Image file sizes should also be minimized to speed up page loading times.</p><h2>6. Quality Backlinks</h2><p>Getting backlinks from high-quality websites can boost your authority and SEO ranking. Build partnerships with other websites in your industry and engage in mutually beneficial link exchanges.</p><h2>Conclusion</h2><p>Optimizing your content for SEO requires attention to detail and a commitment to providing added value to users. By implementing proper SEO practices, you can improve search engine rankings, attract more traffic, and strengthen your online presence.</p>",
+            "image": "https://itbox.id/wp-content/uploads/2023/02/SEO-1_11zon.jpg",
+            "image_alt": "SEO Cover Image",
+            "short_description": "SEO stands for \u201csearch engine optimization.\u201d In simple terms, SEO means the process of improving your website to increase its visibility in Google, Microsoft Bing, and other search engines whenever people search for: Products you sell. Services you provide.",
+            "title": "Search Engine Optimization"
+        },
+        {
+            "blog_id": "4c2147e9-d2ec-4a4a-8fee-9b0052dc2ba8",
+            "description": "Learn about how to implement data fetching with React Query. React Query makes fetching, caching, synchronizing and updating server state in your React applications a breeze",
+            "image": "https://firebasestorage.googleapis.com/v0/b/personal-blog-darmajr.appspot.com/o/blog-content%2Freact-query.png?alt=media&token=a8720f2e-f982-48fb-bf91-25a7900237da",
+            "image_alt": "React Query",
+            "short_description": "Learn about how to implement data fetching with React Query. React Query makes fetching, caching, synchronizing and updating server state in your React applications a breeze",
+            "title": "React Query Fundamental"
+        }
+    ],
+    "GET_BLOG": [
+        {
+            "blog_id": "4c2147e9-d2ec-4a4a-8fee-9b0052dc2ba8",
+            "description": "Learn about how to implement data fetching with React Query. React Query makes fetching, caching, synchronizing and updating server state in your React applications a breeze",
+            "image": "https://firebasestorage.googleapis.com/v0/b/personal-blog-darmajr.appspot.com/o/blog-content%2Freact-query.png?alt=media&token=a8720f2e-f982-48fb-bf91-25a7900237da",
+            "image_alt": "React Query",
+            "short_description": "Learn about how to implement data fetching with React Query. React Query makes fetching, caching, synchronizing and updating server state in your React applications a breeze",
+            "title": "React Query Fundamental"
+        }
+    ],
+    "BAD_BLOG_DATA_POST": {
+        "title": "Lorem ipsum dolor sit amet",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima aliquid enim possimus repudiandae odio natus blanditiis optio, facere veniam. Assumenda repellendus dolores sit, harum libero soluta autem consectetur quo esse!"
+    },
+    "BLOG_DATA_POST": {
+        "title": "Lorem ipsum dolor sit amet",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima aliquid enim possimus repudiandae odio natus blanditiis optio, facere veniam. Assumenda repellendus dolores sit, harum libero soluta autem consectetur quo esse!",
+        "image": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Qui, iste?",
+        "image_alt": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa et, fugiat dolorem illum expedita officia sequi quis atque repellat deserunt, nesciunt quas consequatur doloribus optio.",
+        "short_description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis, dolorem alias unde fuga aut distinctio."
+    },
+    "SUCCESS_CREATE_BLOG": {
+        "message": "Successfully created a document"
+    },
+    "FAILED_CREATE_BLOG": {
+        "message": "All fields are required. Property required: title, description, image, image_alt"
+    },
+    "SUCCESS_DELETE_BLOG": {
+        "message": "Document deleted successfully"
+    }
+}

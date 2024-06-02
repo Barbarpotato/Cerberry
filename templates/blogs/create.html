@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+
+{% block cdn %}
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+{% endblock %}
+
+{% block css %}
+
+<style>
+    @media only screen and (min-width: 800px) {
+
+        #header,
+        #features {
+            padding-inline: 200px;
+        }
+    }
+
+    body {
+        padding-top: 56px;
+        background-color: #222438;
+        color: #ffffff;
+    }
+
+    main {
+        flex: 1;
+    }
+
+    header {
+        background-color: #222438;
+        color: #ffffff;
+        padding: 80px 0;
+    }
+
+    section {
+        padding: 60px 0;
+    }
+
+    #footer {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+
+    p {
+        font-size: 16px;
+        line-height: 1.6;
+        /* Warna teks */
+        margin-bottom: 20px;
+    }
+
+    /* Memberikan efek bayangan pada teks */
+    p.shadow {
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Menambahkan padding dan border untuk efek kotak */
+    p.boxed {
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    /* Menyisipkan gambar di sebelah teks */
+    p.with-image {
+        display: flex;
+        align-items: center;
+    }
+
+    p.with-image img {
+        margin-right: 15px;
+        border-radius: 5px;
+    }
+
+    /* Mengatur warna latar belakang untuk highlight */
+    p.highlight {
+        background-color: #f7f7f7;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    input.form-control:hover,
+    input.form-control:focus {
+        border-color: #f54653;
+        /* Replace with your desired hover color */
+    }
+</style>
+
+{% endblock %}
+
+
+{% block title_navigation %}Cerberry Blogs{% endblock %}
+
+
+{% block content %}
+
+<!-- Header Section -->
+<header id="header" class="text-center">
+    <h1 class="display-4">Create Your Blog in <a style="cursor: pointer; color: #f54653; font-weight: bold;"
+            onclick="window.location.href='/'">Cerberry</a></h1>
+    <p class="lead">This Endpoint will let you to build and customize your new blog</p>
+</header>
+
+<section>
+    <div class="container">
+
+        <h2 id="content_result_heading" style="margin-block: 10px; color: #f54653; font-weight: bold; display: none;">
+            Your Blog Creation
+        </h2>
+
+
+        <!-- //** BLOG CONTENT -->
+        <div id="blog-content">
+        </div>
+
+
+        <!-- //** STEPPER 1 -->
+        <div id="stepper-1">
+            <h2 style="color: #f54653; font-weight: bold; margin-block: 20px;">Create The Initial Blog</h2>
+
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Blog Title:</label>
+                <input type="text" class="form-control" id="blog_title">
+                <p style="color: #f54653; display: none;" id="invalid_blog_title">Blog Title Is Empty!</p>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Short Description:</label>
+                <input type="text" class="form-control" id="short_description">
+                <p style="color: #f54653; display: none;" id="invalid_short_desc">Short Description Is Empty!</p>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Image Cover URL:</label>
+                <input type="text" class="form-control" id="image_cover">
+                <p style="color: #f54653; display: none;" id="invalid_image_cover">Image Cover URL Is Empty!</p>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Image alt:</label>
+                <input type="text" class="form-control" id="image_alt">
+                <p style="color: #f54653; display: none;" id="invalid_image_alt">Image alt Is Empty!</p>
+            </div>
+
+            <button onclick="to_stepper_two();" id="Text" type="button" class="btn btn-danger">
+                Next</button>
+        </div>
+
+
+        <!-- //** STEPPER 2 -->
+        <div style="display: none;" id="stepper-2">
+            <h2 style="color: #f54653; font-weight: bold; margin-block: 20px;">Choose Your Element Content</h2>
+
+            <div id="choose-content-element-2" class="btn-group" role="group" aria-label="Basic mixed styles example">
+                <button onclick="on_click_pharagraph();" id="Text" type="button" class="btn btn-danger">
+                    Description</button>
+                <button onclick="on_click_code();" id="image" type="button" class="btn btn-danger">Code
+                    Content</button>
+                <button onclick="on_click_image();" id="image" type="button" class="btn btn-danger">Image
+                    Content</button>
+
+                <button onclick="createBlog();" type="button" class="btn btn-secondary">
+                    Create Blog Content
+                </button>
+
+            </div>
+        </div>
+
+
+        <!-- //** CONTENT EDITOR -->
+        <div id="text_area_input" style="display: none; margin-block: 20px;" class="mb-3">
+            <div id="editor">
+            </div>
+            <button style="margin-block: 30px;" id="save_text_area_input" type="button" class="btn btn-danger">Add
+                To Content
+            </button>
+        </div>
+
+        <div id="code_input" style="display: none; margin-block: 20px;" class="mb-3">
+            <textarea placeholder="Type Your Code Here..." id="code_value" class="form-control" rows="10"></textarea>
+            <button style="margin-block: 30px;" id="save_code_input" type="button" class="btn btn-danger">Add
+                To Content
+            </button>
+        </div>
+
+        <div id="basic_input" style="display: none; margin-block: 20px;" class="mb-3">
+            <input type="text" class="form-control" id="image_value" placeholder="">
+            <button style="margin-block: 30px;" id="save_basic_input" type="button" class="btn btn-danger">Add
+                To
+                Content
+            </button>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
+
+
+{% block js %}
+
+<!-- Initialize Quill editor -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+    var quill = new Quill('#editor', {
+        theme: 'snow'
+    });
+</script>
+
+
+<script>
+    let blog_content = document.getElementById('blog-content');
+    const content_result_heading = document.getElementById('content_result_heading');
+
+    const text = document.getElementById('text');
+    const image = document.getElementById('image');
+
+    const blog_title = document.getElementById('blog_title');
+    const short_description = document.getElementById('short_description');
+    const image_cover = document.getElementById('image_cover');
+    const image_alt = document.getElementById('image_alt');
+
+    const invalid_blog_title = document.getElementById('invalid_blog_title');
+    const invalid_short_description = document.getElementById('invalid_short_desc');
+    const invalid_image_cover = document.getElementById('invalid_image_cover');
+    const invalid_image_alt = document.getElementById('invalid_image_alt');
+
+    const stepper_one = document.getElementById('stepper-1');
+    const stepper_two = document.getElementById('stepper-2');
+
+    // Input Area
+    const basic_input = document.getElementById('basic_input');
+    const code_input = document.getElementById('code_input');
+    const text_area_input = document.getElementById('text_area_input');
+
+    const save_code_input = document.getElementById('save_code_input');
+    const save_text_area_input = document.getElementById('save_text_area_input');
+    const image_value = document.getElementById('image_value');
+    const code_value = document.getElementById('code_value');
+
+    const editor = document.getElementById('editor');
+    var counter = 0;
+</script>
+
+<script>
+    let content_result = [];
+
+    // Function to normalize an HTML string
+    function normalizeHTML(htmlString) {
+        // Create a temporary element to parse the HTML string
+        var tempElement = document.createElement('div');
+        tempElement.innerHTML = htmlString;
+        // Serialize the element back to HTML, which will normalize it
+        return tempElement.innerHTML;
+    }
+
+    // ---------------------------- //
+    // ** Code for Displaying Input ** //
+    // ---------------------------- //
+
+    function to_stepper_two() {
+        if (blog_title.value == "") invalid_blog_title.style.display = 'block';
+        else invalid_blog_title.style.display = 'none';
+        if (short_description.value == "") invalid_short_description.style.display = 'block';
+        else invalid_short_description.style.display = 'none';
+        if (image_cover.value == "") invalid_image_cover.style.display = 'block';
+        else invalid_image_cover.style.display = 'none';
+        if (image_alt.value == "") invalid_image_alt.style.display = 'block';
+        else invalid_image_alt.style.display = 'none';
+        if (blog_title.value === '' || short_description.value === '' || image_cover.value === '' || image_alt.value === '') return
+        stepper_one.style.display = 'none';
+        stepper_two.style.display = 'block';
+    }
+
+    function on_click_pharagraph() {
+        basic_input.style.display = 'none';
+        text_area_input.style.display = 'block';
+        code_input.style.display = 'none';
+        save_text_area_input.setAttribute("onclick", "add_text_area_input();");
+    }
+
+    function on_click_image() {
+        basic_input.style.display = 'block';
+        text_area_input.style.display = 'none';
+        code_input.style.display = 'none';
+        image_value.setAttribute("placeholder", "Input Your Image URL");
+        save_basic_input.setAttribute("onclick", "add_image();");
+    }
+
+    function on_click_code() {
+        basic_input.style.display = 'none';
+        text_area_input.style.display = 'none';
+        code_input.style.display = 'block';
+        save_code_input.setAttribute("onclick", "add_code();");
+    }
+
+
+    // ---------------------------- //
+    // ** Code for Added Content ** //
+    // ---------------------------- //
+
+    function add_image() {
+        const content_image = `<div id="content-${counter}"><span style="cursor: pointer;" onclick="deleteContent(\`${counter}\`)">❌</span><img src='${image_value.value}'/></div>`;
+        content_result.push(content_image)
+        console.log(content_result)
+        blog_content.innerHTML = content_result.join('');;
+        basic_input.style.display = 'none';
+        text_area_input.style.display = 'none';
+        code_input.style.display = 'none';
+        image_value.value = '';
+        counter++;
+    }
+
+    function add_code() {
+        // ** prevent the html tag to render. instread show as the code snippet
+        var modified_code = code_value.value.replace(/</g, '&lt;');
+        modified_code = modified_code.replace(/>/g, '&gt;');
+        const content_code = `<div id="content-${counter}"><span style="cursor: pointer;" onclick="deleteContent(\`${counter}\`)">❌</span><pre style="background-color: black; color: white; padding:10px; border-radius: 5px;"><code style="color: white;">${modified_code}</code></pre></div>`;
+        content_result.push(content_code)
+        blog_content.innerHTML = content_result.join('');
+        basic_input.style.display = 'none';
+        text_area_input.style.display = 'none';
+        code_input.style.display = 'none';
+        code_value.value = '';
+        counter++;
+    }
+
+    function add_text_area_input() {
+        var htmlContent = `<div id="content-${counter}"><span style="cursor: pointer;" onclick="deleteContent(\`${counter}\`)">❌</span>${quill.root.innerHTML}</div>`;
+        content_result.push(htmlContent)
+        blog_content.innerHTML = content_result.join('');;
+        basic_input.style.display = 'none';
+        code_input.style.display = 'none';
+        text_area_input.style.display = 'none';
+        if (content_result !== '') content_result_heading.style.display = 'block';
+        quill.deleteText(0, quill.getLength());
+        counter++;
+    }
+
+    // ---------------------------- //
+    // ** Code for Delete Content ** //
+    // ---------------------------- //
+
+    function deleteContent(counter) {
+        console.log(counter)
+        const element = document.getElementById(`content-${counter}`);
+        const StringElement = element.outerHTML
+        content_result = content_result.filter(element => normalizeHTML(element) !== normalizeHTML(StringElement))
+        element.remove()
+        blog_content.innerHTML = content_result.join('');
+    }
+
+    // ---------------------------- //
+    // ** Code for POST Content ** //
+    // ---------------------------- //
+
+    function createBlog() {
+
+        // ** Use temp var so it won't override the original when the post data is canceled
+        var content_result_temp = [...content_result]; // Create a shallow copy of content_result
+
+        // Clean the span tags that are used for deleting content while editing
+        for (var i = 0; i < content_result.length; i++) {
+            content_result_temp[i] = content_result_temp[i].replace(/<span[^>]*>(.*?)<\/span>/g, '');
+        }
+
+        const usernameInput = window.prompt('Enter Your Username:');
+
+        if (usernameInput !== null) {
+            const passwordInput = window.prompt('Enter Your Password:');
+
+            if (passwordInput !== null) {
+
+                const apiEndpoint = '/blog/create';
+                const base64Credentials = btoa(`${usernameInput}:${passwordInput}`);
+                const content = {
+                    'title': blog_title.value,
+                    'description': content_result_temp.join(''),
+                    'short_description': short_description.value,
+                    'image': image_cover.value,
+                    'image_alt': image_alt.value
+                }
+
+                fetch('/blog/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(content),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle the response from the server
+                        window.alert('Success Create Blog');
+                        window.location.href = '/blogs';
+                    })
+                    .catch(error => {
+                        // Handle errors
+                        content_result = '';
+                        window.alert(error);
+                    });
+
+            } else {
+                window.alert('Cancelled Create Blog.');
+            }
+        } else {
+            window.alert('Cancelled Create Blog.');
+        }
+    }
+
+</script>
+
+{% endblock %}

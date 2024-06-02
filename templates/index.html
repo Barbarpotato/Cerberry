@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<!-- Style Section -->
+<style>
+    @media only screen and (min-width: 800px) {
+
+        .hbspt-form {
+            padding-inline: 150px;
+            padding-block: 20px;
+        }
+
+        #header,
+        #features {
+            padding-inline: 200px;
+        }
+    }
+
+    body {
+        padding-top: 56px;
+        background-color: #222438;
+        color: #ffffff;
+    }
+
+    main {
+        flex: 1;
+    }
+
+    header {
+        background-color: #222438;
+        color: #ffffff;
+        padding: 80px 0;
+    }
+
+    section {
+        padding: 60px 0;
+    }
+
+    .form-control:focus {
+        border-width: 0.2em;
+        border-radius: 0.2em;
+        border-color: #f54653;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+
+    #footer {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
+
+{% endblock %}
+
+{% block title_navigation %} Cerberry {% endblock %}
+
+{% block content %}
+
+<!-- Header Section -->
+<header id="header" class="text-center">
+    <img src="/static/images/cerbery_background.png" width="30%" height="30%" alt="logo">
+    <h1 class="display-4">Welcome To My Backend Service Name <a style="color: #f54653; font-weight: bold;">Cerberry</a>
+    </h1>
+    <p class="lead">Cerberry is a platform providing robust backend services to support the frontend portfolio
+        infrastructure. such as building a personal blog without a third party, etc.</p>
+    <blockquote class="blockquote">
+        <p class="mb-0">"If You Visit This Site, it is just the backend I have built for my Front-End Website
+            Portfolio.
+            But here we are, learning together, and Maybe I can share with all of you about my backend
+            infrastructure"
+        </p>
+        <footer class="blockquote-footer">Darmawan</footer>
+    </blockquote>
+    <a style="background-color: #f54653; color: white;" class="btn btn-lg"
+        href="https://github.com/Barbarpotato/Backend-Blog">Learn More</a>
+</header>
+
+<!-- Features Section -->
+<section id="features">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 style="color: #f54653; font-weight: bold;">Technology Stack</h2>
+                <p class="lead">Explore the powerful features and technology stack that Cerberry Backend utilizes
+                </p>
+            </div>
+        </div>
+        <div class="row p-2">
+            <div class="col-lg-4">
+                <div style="background-color: #f54653;" class="card text-white shadow m-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title mt-4">Backend Framework</h5>
+                        <p class="card-text" style="text-align: justify;">Cerberry Backend Service use
+                            the Flask Framework.
+                            Flask is a micro web framework written in Python. It is designed to be lightweight and
+                            modular, allowing developers to build web applications quickly and with minimal code.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div style="background-color: #f54653;" class="card text-white shadow m-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title mt-4">CI/CD Pipeline</h5>
+                        <p class="card-text" style="text-align: justify; ">
+                            CI/CD (Continuous Integration and Continuous Deployment) is a software development
+                            practice that automates testing and code deployment continuously. Cerberry use GitHub,
+                            Vercel, and GitHub Actions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div style="background-color: #f54653;" class="card text-white shadow m-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title mt-4">Containerized Application </h5>
+                        <p class="card-text" style="text-align: justify;"">Cerberry Backend use Docker
+                                to package, distribute, and run applications in an isolated environment called a
+                                " container." These containers encapsulate the software and all its dependencies,
+                            allowing applications to run consistently across various environments</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact">
+    <div class="container-fluid">
+        <div class="row py-2 px-4">
+            <div class="col-lg-12 text-center">
+                <h2 style="color: #f54653; font-weight: bold;">Contact Me</h2>
+                <p>Feel free to reach out to us if you have any questions or inquiries.</p>
+            </div>
+            <div class="col-lg-12">
+                <label for="Name" class="form-label">Name</label>
+                <input placeholder="Your Nickname..." type="text" id="Name-Contact" class="form-control rounded">
+                <p style="display: none; color: #f54653;" id="invalid-name-contact">Invalid Name. Please Fill the Name
+                    Input</p>
+                <label for="Email" class="form-label mt-2">Email</label>
+                <input placeholder="Your Email Address..." type="text" id="Email-Contact" class="form-control rounded">
+                <p style="display: none; color: #f54653;" id="invalid-email-contact">Invalid Email. Please Fill the
+                    Email Input</p>
+                <label for="Message" class="form-label mt-2">Message</label>
+                <textarea placeholder="Type Your Message Here..." style="resize: none;" rows="5" id="Message-Contact"
+                    class="form-control rounded"></textarea>
+                <p style="display: none; color: #f54653;" id="invalid-message-contact">Invalid Message. Please Fill the
+                    Message Input</p>
+                <button id="send_message_contact" onclick="send_message();" class="btn btn-lg w-100 mt-4"
+                    style="background-color: #f54653; color: #fff;">
+                    Send a Message
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+    const name = document.getElementById('Name-Contact');
+    const email = document.getElementById('Email-Contact');
+    const message = document.getElementById('Message-Contact');
+
+    const invalid_name = document.getElementById('invalid-name-contact');
+    const invalid_email = document.getElementById('invalid-email-contact');
+    const invalid_message = document.getElementById('invalid-message-contact');
+
+    const send_message_btn = document.getElementById('send_message_contact');
+
+</script>
+
+<script>
+
+
+
+    function send_message() {
+
+
+        if (name.value === '' || email.value === '' || message.value === '') {
+            if (name.value === '') {
+                invalid_name.style.display = 'block';
+            } else {
+                invalid_name.style.display = 'none';
+            }
+            if (email.value === '') {
+                invalid_email.style.display = 'block';
+            } else {
+                invalid_email.style.display = 'none';
+            }
+            if (message.value === '') {
+                invalid_message.style.display = 'block';
+            } else {
+                invalid_message.style.display = 'none';
+            }
+            return;
+        }
+        send_message_btn.disabled = true;
+        invalid_name.style.display = 'none';
+        invalid_email.style.display = 'none';
+        invalid_message.style.display = 'none';
+
+        fetch('/form/contact_us', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'name': name.value,
+                'email': email.value,
+                'message': message.value
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data
+                send_message_btn.disabled = false;
+                name.value = '';
+                email.value = '';
+                message.value = '';
+                alert("Your message has been sent successfully! We will get back to you as soon as possible.")
+            })
+            .catch(error => {
+                send_message_btn.disabled = false;
+                window.alert(error);
+            });
+
+
+    }
+
+
+
+</script>
+
+{% endblock %}

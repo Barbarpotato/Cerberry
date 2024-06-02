@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+Lib
+firebase.json
+__pycache__/
+
+# Flask
+instance/
+webapp.egg-info/
+*.egg-info/
+.env
+venv
+
+# IDEs
+.idea/
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# Dependencies
+venv/
+env/
+env2/
+env3/
+node_modules/
+
+# Compiled files
+*.pyc
+*.class
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
