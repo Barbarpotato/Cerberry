@@ -97,6 +97,21 @@
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button custom-accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseSearch" aria-expanded="false"
+                        aria-controls="collapseSearch">
+                        /blogs/search?title=string
+                    </button>
+                </h2>
+                <div id="collapseSearch" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Get specific Blog data based on the search by title of the blog.</strong>
+                        <code>Return JSON data as a response</code>.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button custom-accordion-button collapsed" type="button"
                         data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
                         aria-controls="collapseTwo">
                         /blog/{id}

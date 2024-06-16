@@ -81,7 +81,7 @@ class TestBlogs(unittest.TestCase):
                                     spec=Response,
                                     json=Mock(return_value=BLOGS_DATA['GET_BLOG']))
 
-        response = self.client.get('/blog/4c2147e9-d2ec-4a4a-8fee-9b0052dc2ba8', headers=self.get_authenticated_headers())
+        response = self.client.get('/blog/586f3729-120e-4016-89e0-c620d360ce2d', headers=self.get_authenticated_headers())
 
         # Assertions
         self.assertEqual(response.status_code, status.HTTP_200_OK)
