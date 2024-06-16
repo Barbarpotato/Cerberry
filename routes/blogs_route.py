@@ -38,6 +38,11 @@ def get_all_blogs():
         blog_collection = db.collection('blog-content')
         blog_data = blog_collection.order_by('timestamp', direction=firestore.Query.DESCENDING).limit(30).stream()
         blog_data = [doc.to_dict() for doc in blog_data]
+
+        # Remove 'trigrams_search' field from each document
+        for doc in blog_data:
+            doc.pop('trigrams_search', None)
+
         return jsonify(blog_data), status.HTTP_200_OK
     except Exception as error:
         return jsonify({'error': str(error)}), status.HTTP_500_SERVER_ERROR
@@ -55,6 +60,10 @@ def get_blog_by_id(blog_id):
 
         # Convert query results to a list of dictionaries
         blog_data = [doc.to_dict() for doc in docs]
+
+        # Remove 'trigrams' field from each document
+        for doc in blog_data:
+            doc.pop('trigrams_search', None)
 
         return jsonify(blog_data), status.HTTP_200_OK
     except Exception as error:
