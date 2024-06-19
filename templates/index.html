@@ -3,16 +3,20 @@
 {% block css %}
 <!-- Style Section -->
 <style>
-    @media only screen and (min-width: 800px) {
-
-        .hbspt-form {
-            padding-inline: 150px;
-            padding-block: 20px;
+    @media only screen and (max-width: 600px) {
+        p {
+            font-size: 10px;
+            margin-inline: 10%;
         }
 
-        #header,
-        #features {
-            padding-inline: 200px;
+        h1 {
+            margin-block: 5%;
+            font-size: 30px;
+        }
+
+        img {
+            width: 60%;
+            height: 60%;
         }
     }
 
@@ -20,27 +24,6 @@
         padding-top: 56px;
         background-color: #222438;
         color: #ffffff;
-    }
-
-    main {
-        flex: 1;
-    }
-
-    header {
-        background-color: #222438;
-        color: #ffffff;
-        padding: 80px 0;
-    }
-
-    section {
-        padding: 60px 0;
-    }
-
-    .form-control:focus {
-        border-width: 0.2em;
-        border-radius: 0.2em;
-        border-color: #f54653;
-        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
     }
 
     #footer {
@@ -62,8 +45,8 @@
 
 <!-- Header Section -->
 <header id="header" class="text-center">
-    <img src="/static/images/cerbery_background.png" width="30%" height="30%" alt="logo">
-    <h1 class="display-4">Welcome To My Backend Service Name <a style="color: #f54653; font-weight: bold;">Cerberry</a>
+    <img src="/static/images/cerbery_background.png" width="25%" height="25%" alt="logo">
+    <h1>Welcome To My Backend Service Name <a style="color: #f54653; font-weight: bold;">Cerberry</a>
     </h1>
     <p class="lead">Cerberry is a platform providing robust backend services to support the frontend portfolio
         infrastructure. such as building a personal blog without a third party, etc.</p>
@@ -73,91 +56,11 @@
             But here we are, learning together, and Maybe I can share with all of you about my backend
             infrastructure"
         </p>
-        <footer class="blockquote-footer">Darmawan</footer>
+        <footer class="blockquote-footer mt-2">Darmawan</footer>
     </blockquote>
     <a style="background-color: #f54653; color: white;" class="btn btn-lg"
         href="https://github.com/Barbarpotato/Backend-Blog">Learn More</a>
 </header>
-
-<!-- Features Section -->
-<section id="features">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <h2 style="color: #f54653; font-weight: bold;">Technology Stack</h2>
-                <p class="lead">Explore the powerful features and technology stack that Cerberry Backend utilizes
-                </p>
-            </div>
-        </div>
-        <div class="row p-2">
-            <div class="col-lg-4">
-                <div style="background-color: #f54653;" class="card text-white shadow m-2" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title mt-4">Backend Framework</h5>
-                        <p class="card-text" style="text-align: justify;">Cerberry Backend Service use
-                            the Flask Framework.
-                            Flask is a micro web framework written in Python. It is designed to be lightweight and
-                            modular, allowing developers to build web applications quickly and with minimal code.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div style="background-color: #f54653;" class="card text-white shadow m-2" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title mt-4">CI/CD Pipeline</h5>
-                        <p class="card-text" style="text-align: justify; ">
-                            CI/CD (Continuous Integration and Continuous Deployment) is a software development
-                            practice that automates testing and code deployment continuously. Cerberry use GitHub,
-                            Vercel, and GitHub Actions</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div style="background-color: #f54653;" class="card text-white shadow m-2" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title mt-4">Containerized Application </h5>
-                        <p class="card-text" style="text-align: justify;"">Cerberry Backend use Docker
-                                to package, distribute, and run applications in an isolated environment called a
-                                " container." These containers encapsulate the software and all its dependencies,
-                            allowing applications to run consistently across various environments</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Contact Section -->
-<section id="contact">
-    <div class="container-fluid">
-        <div class="row py-2 px-4">
-            <div class="col-lg-12 text-center">
-                <h2 style="color: #f54653; font-weight: bold;">Contact Me</h2>
-                <p>Feel free to reach out to us if you have any questions or inquiries.</p>
-            </div>
-            <div class="col-lg-12">
-                <label for="Name" class="form-label">Name</label>
-                <input placeholder="Your Nickname..." type="text" id="Name-Contact" class="form-control rounded">
-                <p style="display: none; color: #f54653;" id="invalid-name-contact">Invalid Name. Please Fill the Name
-                    Input</p>
-                <label for="Email" class="form-label mt-2">Email</label>
-                <input placeholder="Your Email Address..." type="text" id="Email-Contact" class="form-control rounded">
-                <p style="display: none; color: #f54653;" id="invalid-email-contact">Invalid Email. Please Fill the
-                    Email Input</p>
-                <label for="Message" class="form-label mt-2">Message</label>
-                <textarea placeholder="Type Your Message Here..." style="resize: none;" rows="5" id="Message-Contact"
-                    class="form-control rounded"></textarea>
-                <p style="display: none; color: #f54653;" id="invalid-message-contact">Invalid Message. Please Fill the
-                    Message Input</p>
-                <button id="send_message_contact" onclick="send_message();" class="btn btn-lg w-100 mt-4"
-                    style="background-color: #f54653; color: #fff;">
-                    Send a Message
-                </button>
-            </div>
-        </div>
-    </div>
-</section>
 
 {% endblock %}
 

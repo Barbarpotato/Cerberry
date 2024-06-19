@@ -10,11 +10,20 @@
 {% block css %}
 <!-- Style Section -->
 <style>
-    @media only screen and (min-width: 800px) {
+    @media only screen and (max-width: 600px) {
+        p {
+            font-size: 10px;
+            margin-inline: 10%;
+        }
 
-        #header,
-        #features {
-            padding-inline: 200px;
+        h1 {
+            margin-block: 5%;
+            font-size: 30px;
+        }
+
+        img {
+            width: 60%;
+            height: 60%;
         }
     }
 
@@ -22,20 +31,6 @@
         padding-top: 56px;
         background-color: #222438;
         color: #ffffff;
-    }
-
-    main {
-        flex: 1;
-    }
-
-    header {
-        background-color: #222438;
-        color: #ffffff;
-        padding: 80px 0;
-    }
-
-    section {
-        padding: 60px 0;
     }
 
     #footer {
@@ -47,28 +42,22 @@
         bottom: 0;
         width: 100%;
     }
-
-    .custom-accordion-button {
-        background-color: #f54653;
-        /* Change this to your desired color */
-        color: #fff;
-        /* Change this to your desired text color */
-    }
 </style>
+
 
 {% endblock %}
 
-{% block title_navigation %} Cerberry Blogs {% endblock %}
+{% block title_navigation %} Cerberry{% endblock %}
 
 {% block content %}
 <!-- Header Section -->
-<header id="header" class="text-center">
+<header id="header" class="text-center" style="margin-top: 5%; margin-bottom: 5%;">
     <h1 class="display-4">Welcome To <a style="color: #f54653; font-weight: bold;"> Cerberry Blogs</a></h1>
     <p class="lead">Use this service to build new blog, see the blog and remove the blog from firestore</p>
 </header>
 
 <!-- Features Section -->
-<section id="features">
+<section id="features" style="margin-inline: 10%;">
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12 text-center">
