@@ -48,7 +48,7 @@
     <img src="/static/images/cerbery_background.png" width="25%" height="25%" alt="logo">
     <h1>Welcome To My Backend Service Name <a style="color: #f54653; font-weight: bold;">Cerberry</a>
     </h1>
-    <p class="lead">Cerberry is a platform providing robust backend services to support the frontend portfolio
+    <p>Cerberry is a platform providing robust backend services to support the frontend portfolio
         infrastructure. such as building a personal blog without a third party, etc.</p>
     <blockquote class="blockquote">
         <p class="mb-0">"If You Visit This Site, it is just the backend I have built for my Front-End Website
@@ -58,93 +58,12 @@
         </p>
         <footer class="blockquote-footer mt-2">Darmawan</footer>
     </blockquote>
-    <a style="background-color: #f54653; color: white;" class="btn btn-lg"
+    <a style="background-color: #f54653; color: white;" class="btn btn-sm"
         href="https://github.com/Barbarpotato/Backend-Blog">Learn More</a>
 </header>
 
 {% endblock %}
 
 {% block js %}
-
-<script>
-
-    const name = document.getElementById('Name-Contact');
-    const email = document.getElementById('Email-Contact');
-    const message = document.getElementById('Message-Contact');
-
-    const invalid_name = document.getElementById('invalid-name-contact');
-    const invalid_email = document.getElementById('invalid-email-contact');
-    const invalid_message = document.getElementById('invalid-message-contact');
-
-    const send_message_btn = document.getElementById('send_message_contact');
-
-</script>
-
-<script>
-
-
-
-    function send_message() {
-
-
-        if (name.value === '' || email.value === '' || message.value === '') {
-            if (name.value === '') {
-                invalid_name.style.display = 'block';
-            } else {
-                invalid_name.style.display = 'none';
-            }
-            if (email.value === '') {
-                invalid_email.style.display = 'block';
-            } else {
-                invalid_email.style.display = 'none';
-            }
-            if (message.value === '') {
-                invalid_message.style.display = 'block';
-            } else {
-                invalid_message.style.display = 'none';
-            }
-            return;
-        }
-        send_message_btn.disabled = true;
-        invalid_name.style.display = 'none';
-        invalid_email.style.display = 'none';
-        invalid_message.style.display = 'none';
-
-        fetch('/form/contact_us', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                'name': name.value,
-                'email': email.value,
-                'message': message.value
-            }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Handle the response data
-                send_message_btn.disabled = false;
-                name.value = '';
-                email.value = '';
-                message.value = '';
-                alert("Your message has been sent successfully! We will get back to you as soon as possible.")
-            })
-            .catch(error => {
-                send_message_btn.disabled = false;
-                window.alert(error);
-            });
-
-
-    }
-
-
-
-</script>
 
 {% endblock %}
