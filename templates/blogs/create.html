@@ -9,6 +9,36 @@
 
 {% block css %}
 
+<style>
+    @media only screen and (max-width: 600px) {
+        h1 {
+            margin-block: 5%;
+            font-size: 30px;
+        }
+
+        img {
+            width: 60%;
+            height: 60%;
+        }
+    }
+
+    body {
+        padding-top: 56px;
+        background-color: #222438;
+        color: #ffffff;
+    }
+
+    #footer {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
+
 {% endblock %}
 
 
@@ -19,7 +49,7 @@
 
 <!-- Header Section -->
 <header id="header" class="text-center">
-    <h1 class="display-4">Create Your Blog in <a style="cursor: pointer; color: #f54653; font-weight: bold;"
+    <h1 class="display-4 mt-4">Create Your Blog in <a style="cursor: pointer; color: #f54653; font-weight: bold;"
             onclick="window.location.href='/'">Cerberry</a></h1>
     <p class="lead">This Endpoint will let you to build and customize your new blog</p>
 </header>
