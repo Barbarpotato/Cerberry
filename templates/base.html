@@ -39,9 +39,6 @@
     </main>
 
     <!-- Footer Section -->
-    <footer style="background-color: #222438;" id="footer">
-        <p id="year"></p>
-    </footer>
 
 </body>
 
@@ -59,8 +56,3 @@
     crossorigin="anonymous"></script>
 
 {% block js %}{% endblock %}
-
-<script>
-    const year = document.getElementById('year');
-    year.innerHTML = `&copy; ${new Date().getFullYear()} Cerberry. All rights reserved.`
-</script>
