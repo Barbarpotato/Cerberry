@@ -30,7 +30,6 @@ def blog_create_view():
 
 
 @blogs.route('/blogs/all', methods=['GET'])
-@basic_auth.required
 def get_all_blogs():
     """Get all blogs data limit by 30 records per call"""
     try:
@@ -49,7 +48,6 @@ def get_all_blogs():
 
 
 @blogs.route('/blog/<string:blog_id>', methods=['GET'])
-@basic_auth.required
 def get_blog_by_id(blog_id):
     """Get specific blog data"""
     try:
@@ -71,7 +69,6 @@ def get_blog_by_id(blog_id):
 
 
 @blogs.route('/blogs/search', methods=['GET'])
-@basic_auth.required
 def search_blogs():
     """Search for blogs by title using trigrams search algorithm"""
     try:
@@ -154,6 +151,7 @@ def create_blog():
 
 
 @blogs.route('/blog/delete/<string:blog_id>', methods=['DELETE'])
+@basic_auth.required
 def delete_blog_by_id(blog_id):
     """Delete a blog by id"""
     try:
