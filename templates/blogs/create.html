@@ -251,10 +251,9 @@
     // ---------------------------- //
 
     function add_image() {
-        const content_image = `<div id="content-${counter}"><span style="cursor: pointer;" onclick="deleteContent(\`${counter}\`)">❌</span><img src='${image_value.value}'/></div>`;
+        const content_image = `<div id="content-${counter}"><span style="cursor: pointer;" onclick="deleteContent(\`${counter}\`)">❌</span><img style='width:720px;' src='${image_value.value}'/></div>`;
         content_result.push(content_image)
-        console.log(content_result)
-        blog_content.innerHTML = content_result.join('');;
+        blog_content.innerHTML = content_result.join('');
         basic_input.style.display = 'none';
         text_area_input.style.display = 'none';
         code_input.style.display = 'none';
@@ -293,7 +292,6 @@
     // ---------------------------- //
 
     function deleteContent(counter) {
-        console.log(counter)
         const element = document.getElementById(`content-${counter}`);
         const StringElement = element.outerHTML
         content_result = content_result.filter(element => normalizeHTML(element) !== normalizeHTML(StringElement))
