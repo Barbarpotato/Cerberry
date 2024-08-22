@@ -81,24 +81,29 @@ def search_blogs():
 
         blog_collection = db.collection('blog-content')
 
-        # Set to keep track of document IDs that have already been added
-        matched_doc_ids = set()
-        matched_docs = []
+        # Perform a single query using array_contains_any to get matching documents
+        blog_docs = blog_collection.where('trigrams_search', 'array_contains_any', title_trigrams).limit(18).stream()
 
-        # Query blog content collection to find matches limit only 9 records to show
-        for trigram in title_trigrams:
-            blog_docs = blog_collection.where('trigrams_search', 'array_contains', trigram).limit(18).stream()
-            for doc in blog_docs:
-                doc_id = doc.id
-                if doc_id not in matched_doc_ids:
-                    doc_dict = doc.to_dict()
-                    doc_dict.pop('trigrams_search', None)  # Remove the 'trigrams' field
-                    matched_docs.append(doc_dict)
-                    matched_doc_ids.add(doc_id)  # Add the document ID to the set
+        # Use a dictionary to store document scores based on the number of trigram matches
+        scored_docs = {}
+
+        for doc in blog_docs:
+            doc_id = doc.id
+            doc_dict = doc.to_dict()
+            doc_dict.pop('trigrams_search', None)  # Remove the 'trigrams' field
+
+            # Calculate a score based on matching trigrams
+            score = len(set(doc_dict.get('trigrams_search', [])).intersection(title_trigrams))
+            scored_docs[doc_id] = (doc_dict, score)
+
+        # Sort documents by score and return the top results
+        sorted_docs = sorted(scored_docs.values(), key=lambda x: x[1], reverse=True)[:9]
+        matched_docs = [doc for doc, score in sorted_docs]
 
         return jsonify(matched_docs), status.HTTP_200_OK
     except Exception as error:
         return jsonify({'error': str(error)}), status.HTTP_500_SERVER_ERROR
+
 
 
 @blogs.route('/blog/create', methods=['POST'])
