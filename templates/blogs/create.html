@@ -57,6 +57,12 @@
 <section>
     <div class="container">
 
+
+        <!-- //** Back to stepper 1 button -->
+        <button onclick="back_to_stepper_1();" style="display: none;" id="back_to_stepper_1_btn"
+            class="btn btn-sm btn-danger">Back to
+            previous input</button>
+
         <h2 id="content_result_heading" style="margin-block: 10px; color: #f54653; font-weight: bold; display: none;">
             Your Blog Creation
         </h2>
@@ -92,7 +98,7 @@
                 <p style="color: #f54653; display: none;" id="invalid_image_alt">Image alt Is Empty!</p>
             </div>
 
-            <button onclick="to_stepper_two();" id="Text" type="button" class="btn btn-danger">
+            <button onclick="to_stepper_two();" id="Text" type="button" class="btn btn-sm btn-danger">
                 Next</button>
         </div>
 
@@ -102,15 +108,15 @@
             <h2 style="color: #f54653; font-weight: bold; margin-block: 20px;">Choose Your Element Content</h2>
 
             <div id="choose-content-element-2" class="btn-group" role="group" aria-label="Basic mixed styles example">
-                <button onclick="on_click_pharagraph();" id="Text" type="button" class="btn btn-danger">
+                <button onclick="on_click_pharagraph();" id="Text" type="button" class="text-sm btn btn-sm btn-danger">
                     Description</button>
-                <button onclick="on_click_code();" id="image" type="button" class="btn btn-danger">Code
-                    Content</button>
-                <button onclick="on_click_image();" id="image" type="button" class="btn btn-danger">Image
-                    Content</button>
+                <button onclick="on_click_code();" id="image" type="button" class="text-sm btn btn-sm btn-danger">Code
+                </button>
+                <button onclick="on_click_image();" id="image" type="button" class="text-sm btn btn-sm btn-danger">Image
+                </button>
 
-                <button onclick="createBlog();" type="button" class="btn btn-secondary">
-                    Create Blog Content
+                <button onclick="createBlog();" type="button" class="text-sm btn btn-sm btn-secondary">
+                    Create
                 </button>
 
             </div>
@@ -161,6 +167,7 @@
 
 <script>
     let blog_content = document.getElementById('blog-content');
+    const back_button = document.getElementById("back_to_stepper_1_btn");
     const content_result_heading = document.getElementById('content_result_heading');
 
     const text = document.getElementById('text');
@@ -205,10 +212,23 @@
         return tempElement.innerHTML;
     }
 
+    //** --------------------------------------------------------- **
+    // Restore the content from localstorage when webpage is load
+    //** --------------------------------------------------------- **
+    window.addEventListener('load', function () {
+        // Restore the content from localstorage
+        if (localStorage.getItem('content_blog_title_cache')) {
+            alert("Your content has been restored from previous action.")
+            blog_title.value = localStorage.getItem('content_blog_title_cache');
+            short_description.value = localStorage.getItem('content_blog_short_description_cache');
+            image_cover.value = localStorage.getItem('content_blog_image_cover_cache');
+            image_alt.value = localStorage.getItem('content_blog_image_alt_cache');
+        }
+    });
+
     // ---------------------------- //
     // ** Code for Displaying Input ** //
     // ---------------------------- //
-
     function to_stepper_two() {
         if (blog_title.value == "") invalid_blog_title.style.display = 'block';
         else invalid_blog_title.style.display = 'none';
@@ -219,8 +239,39 @@
         if (image_alt.value == "") invalid_image_alt.style.display = 'block';
         else invalid_image_alt.style.display = 'none';
         if (blog_title.value === '' || short_description.value === '' || image_cover.value === '' || image_alt.value === '') return
+
+        // hide the step 1 process
         stepper_one.style.display = 'none';
+
+        // show the back button to stpper one 
+        back_button.style.display = 'block';
+
+        // ** check the localstorage if exist. use that data
+        if (localStorage.getItem('content_blog_cache') && JSON.parse(localStorage.getItem('content_blog_cache')).length > 0) {
+            content_result = JSON.parse(localStorage.getItem('content_blog_cache'));
+
+            // show content heading
+            content_result_heading.style.display = 'block';
+            blog_content.innerHTML = content_result.join('');
+        }
+
+        // store the content to localstorage
+        localStorage.setItem('content_blog_title_cache', blog_title.value);
+        localStorage.setItem('content_blog_short_description_cache', short_description.value);
+        localStorage.setItem('content_blog_image_cover_cache', image_cover.value);
+        localStorage.setItem('content_blog_image_alt_cache', image_alt.value);
+
+        // show the step 2 process
         stepper_two.style.display = 'block';
+        blog_content.style.display = 'block';
+    }
+
+    function back_to_stepper_1() {
+        stepper_one.style.display = 'block';
+        stepper_two.style.display = 'none';
+        content_result_heading.style.display = 'none';
+        blog_content.style.display = 'none';
+        back_button.style.display = 'none';
     }
 
     function on_click_pharagraph() {
@@ -245,7 +296,6 @@
         save_code_input.setAttribute("onclick", "add_code();");
     }
 
-
     // ---------------------------- //
     // ** Code for Added Content ** //
     // ---------------------------- //
@@ -253,6 +303,10 @@
     function add_image() {
         const content_image = `<div id="content-${counter}"><span style="cursor: pointer;" onclick="deleteContent(\`${counter}\`)">❌</span><img style='width:720px;' src='${image_value.value}'/></div>`;
         content_result.push(content_image)
+
+        // ** Save the content to localstorage
+        localStorage.setItem('content_blog_cache', JSON.stringify(content_result));
+
         blog_content.innerHTML = content_result.join('');
         basic_input.style.display = 'none';
         text_area_input.style.display = 'none';
@@ -262,11 +316,15 @@
     }
 
     function add_code() {
-        // ** prevent the html tag to render. instread show as the code snippet
+        // ** prevent the html tag to render. instead show as the code snippet
         var modified_code = code_value.value.replace(/</g, '&lt;');
         modified_code = modified_code.replace(/>/g, '&gt;');
         const content_code = `<div id="content-${counter}"><span style="cursor: pointer;" onclick="deleteContent(\`${counter}\`)">❌</span><pre style="background-color: black; color: white; padding:10px; border-radius: 5px;"><code style="color: white;">${modified_code}</code></pre></div>`;
         content_result.push(content_code)
+
+        // ** Save the content to localstorage
+        localStorage.setItem('content_blog_cache', JSON.stringify(content_result));
+
         blog_content.innerHTML = content_result.join('');
         basic_input.style.display = 'none';
         text_area_input.style.display = 'none';
@@ -277,7 +335,11 @@
 
     function add_text_area_input() {
         var htmlContent = `<div id="content-${counter}"><span style="cursor: pointer;" onclick="deleteContent(\`${counter}\`)">❌</span>${quill.root.innerHTML}</div>`;
+
         content_result.push(htmlContent)
+        // ** Save the content to localstorage
+        localStorage.setItem('content_blog_cache', JSON.stringify(content_result));
+
         blog_content.innerHTML = content_result.join('');;
         basic_input.style.display = 'none';
         code_input.style.display = 'none';
@@ -295,6 +357,13 @@
         const element = document.getElementById(`content-${counter}`);
         const StringElement = element.outerHTML
         content_result = content_result.filter(element => normalizeHTML(element) !== normalizeHTML(StringElement))
+
+        // ** Save the content to localstorage
+        localStorage.setItem('content_blog_cache', JSON.stringify(content_result));
+
+        // remove the blog content heading if content result is empty
+        if (content_result.length === 0) content_result_heading.style.display = 'none';
+
         element.remove()
         blog_content.innerHTML = content_result.join('');
     }
@@ -313,53 +382,49 @@
             content_result_temp[i] = content_result_temp[i].replace(/<span[^>]*>(.*?)<\/span>/g, '');
         }
 
-        const usernameInput = window.prompt('Enter Your Username:');
+        const apiEndpoint = '/blog/create';
 
-        if (usernameInput !== null) {
-            const passwordInput = window.prompt('Enter Your Password:');
+        const content = {
+            'title': blog_title.value,
+            'description': content_result_temp.join(''),
+            'short_description': short_description.value,
+            'image': image_cover.value,
+            'image_alt': image_alt.value
+        };
 
-            if (passwordInput !== null) {
-
-                const apiEndpoint = '/blog/create';
-                const base64Credentials = btoa(`${usernameInput}:${passwordInput}`);
-                const content = {
-                    'title': blog_title.value,
-                    'description': content_result_temp.join(''),
-                    'short_description': short_description.value,
-                    'image': image_cover.value,
-                    'image_alt': image_alt.value
+        fetch('/blog/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(content),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response from the server
+                window.alert('Success Create Blog');
 
-                fetch('/blog/create', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(content),
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Handle the response from the server
-                        window.alert('Success Create Blog');
-                        window.location.href = '/blogs';
-                    })
-                    .catch(error => {
-                        // Handle errors
-                        content_result = '';
-                        window.alert(error);
-                    });
+                // empty the input value and the blog content after creation
+                content_result = [];
+                blog_title.value = ""
+                short_description.value = ""
+                image_cover.value = ""
+                image_alt.value = ""
 
-            } else {
-                window.alert('Cancelled Create Blog.');
-            }
-        } else {
-            window.alert('Cancelled Create Blog.');
-        }
+                // destroy  clear all the localstorage after creation
+                localStorage.clear();
+
+                window.location.href = '/blogs';
+            })
+            .catch(error => {
+                // Handle errors
+                window.alert(error);
+            });
     }
 
 </script>
