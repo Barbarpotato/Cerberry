@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, render_template, request
 import uuid
+from sqlalchemy import text
 import status
 from auth import basic_auth
 from main import mysql
@@ -17,26 +18,21 @@ def just_check():
 def get_all_blogs():
     """Get all blogs data, limited to 30 records per call"""
     try:
-        # Create a cursor object to execute SQL queries
-        cur = mysql.connection.cursor()
-
-        # SQL query to get the latest 30 records ordered by timestamp
-        query = """
+        # Raw SQL query to get the latest 30 records ordered by timestamp
+        query = text("""
             SELECT blog_id, title, short_description, timestamp, description, image, image_alt
             FROM blogs
             ORDER BY timestamp DESC
             LIMIT 30
-        """
-        cur.execute(query)
+        """)
 
-        # Fetch the data from the database
-        results = cur.fetchall()
-        cur.close()
+        # Execute the query
+        results = mysql.session.execute(query).fetchall()
 
         # Convert the results to a list of dictionaries
         blog_data = []
         for row in results:
-            blog = {
+            blog_data.append({
                 'blog_id': row[0],
                 'title': row[1],
                 'short_description': row[2],
@@ -44,8 +40,7 @@ def get_all_blogs():
                 'description': row[4],
                 'image': row[5],
                 'image_alt': row[6]
-            }
-            blog_data.append(blog)
+            })
 
         return jsonify(blog_data), status.HTTP_200_OK
 
@@ -57,20 +52,15 @@ def get_all_blogs():
 def get_blog_by_id(blog_id):
     """Get specific blog data"""
     try:
-        # Create a cursor object to execute SQL queries
-        cur = mysql.connection.cursor()
-
-        # SQL query to get the specific blog by blog_id, excluding trigrams_search
-        query = """
+        # Raw SQL query to get the specific blog by blog_id
+        query = text("""
             SELECT blog_id, title, short_description, timestamp, description, image, image_alt
             FROM blogs
-            WHERE blog_id = %s
-        """
-        cur.execute(query, (blog_id,))
+            WHERE blog_id = :blog_id
+        """)
 
-        # Fetch the data from the database
-        result = cur.fetchone()
-        cur.close()
+        # Execute the query with parameter binding
+        result = mysql.session.execute(query, {'blog_id': blog_id}).fetchone()
 
         # Check if the result is found
         if result:
@@ -98,26 +88,21 @@ def search_blogs():
     try:
         title = request.args.get('title')
         if not title:
-            return jsonify({'error': 'Title parameter is required'}), status.HTTP_400_BAD_REQUEST  # HTTP 400 Bad Request
+            return jsonify({'error': 'Title parameter is required'}), status.HTTP_400_BAD_REQUEST
 
         # Use '%' wildcards to perform a partial match in the SQL query
         search_term = f"%{title.lower()}%"
 
-        # Create a cursor object to execute SQL queries
-        cur = mysql.connection.cursor()
-
-        # SQL query to search for blogs by title using the LIKE operator
-        query = """
+        # Raw SQL query to search for blogs by title using the LIKE operator
+        query = text("""
             SELECT blog_id, title, short_description, timestamp, description, image, image_alt
             FROM blogs
-            WHERE LOWER(title) LIKE %s
+            WHERE LOWER(title) LIKE :search_term
             LIMIT 18
-        """
-        cur.execute(query, (search_term,))
+        """)
 
-        # Fetch the data from the database
-        results = cur.fetchall()
-        cur.close()
+        # Execute the query with parameter binding
+        results = mysql.session.execute(query, {'search_term': search_term}).fetchall()
 
         # Convert the results to a list of dictionaries
         matched_docs = []
@@ -154,26 +139,28 @@ def create_blog():
 
         # Validate all of the above must not be empty
         if not all([title, description, short_description, image, image_alt]):
-            return (
-                jsonify({
-                    'message': 'Invalid request parameter'
-                }),
-                status.HTTP_400_BAD_REQUEST
-            )
+            return jsonify({'message': 'Invalid request parameter'}), status.HTTP_400_BAD_REQUEST
 
-        # Generate Blog id
+        # Generate Blog ID
         blog_id = str(uuid.uuid4())
 
-        # Insert blog data into the MySQL database
-        cur = mysql.connection.cursor()
-        insert_query = """
+        # Raw SQL query to insert blog data into the database
+        insert_query = text("""
             INSERT INTO blogs
             (blog_id, title, short_description, timestamp, description, image, image_alt)
-            VALUES (%s, %s, %s, NOW(), %s, %s, %s)
-        """
-        cur.execute(insert_query, (blog_id, title, short_description, description, image, image_alt))
-        mysql.connection.commit()
-        cur.close()
+            VALUES (:blog_id, :title, :short_description, NOW(), :description, :image, :image_alt)
+        """)
+
+        # Execute the insert query with parameter binding
+        mysql.session.execute(insert_query, {
+            'blog_id': blog_id,
+            'title': title,
+            'short_description': short_description,
+            'description': description,
+            'image': image,
+            'image_alt': image_alt
+        })
+        mysql.session.commit()
 
         return jsonify({'message': 'Successfully created a document', 'blog_id_created': blog_id}), status.HTTP_201_CREATED
 
@@ -186,21 +173,18 @@ def create_blog():
 def delete_blog_by_id(id):
     """Delete a blog by id"""
     try:
-        # Create a cursor to interact with the MySQL database
-        cur = mysql.connection.cursor()
+        # Raw SQL query to delete the blog by blog_id
+        delete_query = text("DELETE FROM blogs WHERE id = :id")
 
-        # Execute the query to delete the blog by blog_id
-        cur.execute("DELETE FROM blogs WHERE id = %s", (id,))
+        # Execute the query with parameter binding
+        result = mysql.session.execute(delete_query, {'id': id})
 
         # Commit the transaction
-        mysql.connection.commit()
+        mysql.session.commit()
 
-        # Check the number of rows affected (i.e., whether a blog was deleted or not)
-        if cur.rowcount == 0:
+        # Check if any rows were affected (i.e., whether a blog was deleted)
+        if result.rowcount == 0:
             raise Exception("No document found")
-
-        # Close the cursor
-        cur.close()
 
         return jsonify({'message': 'Document deleted successfully'}), status.HTTP_204_NO_CONTENT
 
