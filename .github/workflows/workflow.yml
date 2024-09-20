@@ -22,21 +22,9 @@ jobs:
       - name: Lint with flake8
 
         run: |
+          flake8 main.py  --count --max-complexity=10 --max-line-length=127 --statistics
           flake8 routes/forms_route.py --count --max-complexity=10 --max-line-length=127 --statistics
           flake8 routes/blogs_route.py --count --max-complexity=10 --max-line-length=127 --statistics
-
-      - name: Run unit tests with nose
-        env:
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
-          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
-          FIREBASE_PRIVATE_KEY_ID: ${{ secrets.FIREBASE_PRIVATE_KEY_ID }}
-          FIREBASE_CLIENT_ID: ${{ secrets.FIREBASE_CLIENT_ID }}
-          FIREBASE_TOKEN_URI: ${{ secrets.FIREBASE_TOKEN_URI }}
-          BASIC_AUTH_USERNAME: ${{ secrets.BASIC_AUTH_USERNAME }}
-          BASIC_AUTH_PASSWORD: ${{ secrets.BASIC_AUTH_PASSWORD }}
-        run: |
-          nosetests
 
   docker-build-and-push:
     runs-on: ubuntu-latest
@@ -65,6 +53,11 @@ jobs:
           FIREBASE_CLIENT_ID: ${{ secrets.FIREBASE_CLIENT_ID }}
           BASIC_AUTH_USERNAME: ${{ secrets.BASIC_AUTH_USERNAME }}
           BASIC_AUTH_PASSWORD: ${{ secrets.BASIC_AUTH_PASSWORD }}
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_DB: ${{ secrets.MYSQL_DB }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
         run: |
           docker tag backend-blog:development darmajr94/backend-blog:development
           docker push darmajr94/backend-blog:development

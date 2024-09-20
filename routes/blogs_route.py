@@ -1,116 +1,135 @@
 from flask import Blueprint, jsonify, render_template, request
-from google.cloud import firestore
-from datetime import datetime
 import uuid
-from firebase_setup import initialize_firestore
+from sqlalchemy import text
 import status
 from auth import basic_auth
+from main import mysql
 
 blogs = Blueprint('blogs', __name__)
 
-db = initialize_firestore()
-
-
-def generate_trigrams(text):
-    """Function to generate trigrams from a string for search title blog purpose"""
-    text = "#" + text + "#"
-    return [text[i:i+3] for i in range(len(text) - 2)]
-
 
 @blogs.route('/blogs')
-def get_blogs_view():
+def just_check():
     """Rendering blogs html content"""
     return render_template('/blogs/index.html')
 
 
-@blogs.route('/blog/create/view')
-def blog_create_view():
-    """Rendering blog create view html content"""
-    return render_template('/blogs/create.html')
-
-
 @blogs.route('/blogs/all', methods=['GET'])
 def get_all_blogs():
-    """Get all blogs data limit by 30 records per call"""
+    """Get all blogs data, limited to 30 records per call"""
     try:
-        # Query to get the latest 30 records based on the timestamp field
-        blog_collection = db.collection('blog-content')
-        blog_data = blog_collection.order_by('timestamp', direction=firestore.Query.DESCENDING).limit(30).stream()
-        blog_data = [doc.to_dict() for doc in blog_data]
+        # Raw SQL query to get the latest 30 records ordered by timestamp
+        query = text("""
+            SELECT blog_id, title, short_description, timestamp, description, image, image_alt
+            FROM blogs
+            ORDER BY timestamp DESC
+            LIMIT 30
+        """)
 
-        # Remove 'trigrams_search' field from each document
-        for doc in blog_data:
-            doc.pop('trigrams_search', None)
+        # Execute the query
+        results = mysql.session.execute(query).fetchall()
+
+        # Convert the results to a list of dictionaries
+        blog_data = []
+        for row in results:
+            blog_data.append({
+                'blog_id': row[0],
+                'title': row[1],
+                'short_description': row[2],
+                'timestamp': row[3].strftime('%Y-%m-%d %H:%M:%S'),  # Formatting the timestamp
+                'description': row[4],
+                'image': row[5],
+                'image_alt': row[6]
+            })
 
         return jsonify(blog_data), status.HTTP_200_OK
+
     except Exception as error:
         return jsonify({'error': str(error)}), status.HTTP_500_SERVER_ERROR
 
 
-@blogs.route('/blog/<string:blog_id>', methods=['GET'])
+@blogs.route('/blogs/<string:blog_id>', methods=['GET'])
 def get_blog_by_id(blog_id):
     """Get specific blog data"""
     try:
-        # Query Firestore to get the document with the specified ID
-        blog_ref = db.collection('blog-content')
-        query = blog_ref.where('blog_id', '==', blog_id)
-        docs = query.stream()
+        # Raw SQL query to get the specific blog by blog_id
+        query = text("""
+            SELECT blog_id, title, short_description, timestamp, description, image, image_alt
+            FROM blogs
+            WHERE blog_id = :blog_id
+        """)
 
-        # Convert query results to a list of dictionaries
-        blog_data = [doc.to_dict() for doc in docs]
+        # Execute the query with parameter binding
+        result = mysql.session.execute(query, {'blog_id': blog_id}).fetchone()
 
-        # Remove 'trigrams' field from each document
-        for doc in blog_data:
-            doc.pop('trigrams_search', None)
+        # Check if the result is found
+        if result:
+            # Convert the result to a dictionary
+            blog_data = {
+                'blog_id': result[0],
+                'title': result[1],
+                'short_description': result[2],
+                'timestamp': result[3].strftime('%Y-%m-%d %H:%M:%S'),  # Formatting timestamp
+                'description': result[4],
+                'image': result[5],
+                'image_alt': result[6]
+            }
+            return jsonify(blog_data), status.HTTP_200_OK
+        else:
+            return jsonify({'message': 'Blog not found'}), status.HTTP_404_NOT_FOUND
 
-        return jsonify(blog_data), status.HTTP_200_OK
     except Exception as error:
         return jsonify({'error': str(error)}), status.HTTP_500_SERVER_ERROR
 
 
 @blogs.route('/blogs/search', methods=['GET'])
 def search_blogs():
-    """Search for blogs by title using trigrams search algorithm"""
+    """Search for blogs by title using MySQL LIKE"""
     try:
         title = request.args.get('title')
         if not title:
             return jsonify({'error': 'Title parameter is required'}), status.HTTP_400_BAD_REQUEST
 
-        # Generate trigrams from the search term
-        title_trigrams = generate_trigrams(title.lower())
+        # Use '%' wildcards to perform a partial match in the SQL query
+        search_term = f"%{title.lower()}%"
 
-        blog_collection = db.collection('blog-content')
+        # Raw SQL query to search for blogs by title using the LIKE operator
+        query = text("""
+            SELECT blog_id, title, short_description, timestamp, description, image, image_alt
+            FROM blogs
+            WHERE LOWER(title) LIKE :search_term
+            LIMIT 18
+        """)
 
-        # Perform a single query using array_contains_any to get matching documents
-        blog_docs = blog_collection.where('trigrams_search', 'array_contains_any', title_trigrams).limit(18).stream()
+        # Execute the query with parameter binding
+        results = mysql.session.execute(query, {'search_term': search_term}).fetchall()
 
-        # Use a dictionary to store document scores based on the number of trigram matches
-        scored_docs = {}
-
-        for doc in blog_docs:
-            doc_id = doc.id
-            doc_dict = doc.to_dict()
-            doc_dict.pop('trigrams_search', None)  # Remove the 'trigrams' field
-
-            # Calculate a score based on matching trigrams
-            score = len(set(doc_dict.get('trigrams_search', [])).intersection(title_trigrams))
-            scored_docs[doc_id] = (doc_dict, score)
-
-        # Sort documents by score and return the top results
-        sorted_docs = sorted(scored_docs.values(), key=lambda x: x[1], reverse=True)[:9]
-        matched_docs = [doc for doc, score in sorted_docs]
+        # Convert the results to a list of dictionaries
+        matched_docs = []
+        for row in results:
+            blog = {
+                'blog_id': row[0],
+                'title': row[1],
+                'short_description': row[2],
+                'timestamp': row[3].strftime('%Y-%m-%d %H:%M:%S'),  # Format timestamp
+                'description': row[4],
+                'image': row[5],
+                'image_alt': row[6]
+            }
+            matched_docs.append(blog)
 
         return jsonify(matched_docs), status.HTTP_200_OK
+
     except Exception as error:
         return jsonify({'error': str(error)}), status.HTTP_500_SERVER_ERROR
 
 
-
-@blogs.route('/blog/create', methods=['POST'])
+@blogs.route('/blogs/create', methods=['POST'])
 @basic_auth.required
 def create_blog():
     """Create a blog"""
     try:
+        # Get data from request
         data = request.json
         title = data.get('title')
         short_description = data.get('short_description')
@@ -118,58 +137,54 @@ def create_blog():
         image = data.get('image')
         image_alt = data.get('image_alt')
 
-        # Get the current timestamp
-        current_time = datetime.now()
-
-        # Format the timestamp as mm/dd/yyyy, hh::mm::ss
-        current_time = current_time.strftime("%m/%d/%Y, %H:%M:%S")
-
-        # Generate trigrams from the search engine algorithm use case
-        trigrams_search = generate_trigrams(title.lower())
-
         # Validate all of the above must not be empty
-        if not all([title, description, image, image_alt]):
-            return (
-                jsonify({
-                    'message': 'All fields are required. Property required: title, description, image, image_alt'
-                }),
-                status.HTTP_400_BAD_REQUEST
-            )
+        if not all([title, description, short_description, image, image_alt]):
+            return jsonify({'message': 'Invalid request parameter'}), status.HTTP_400_BAD_REQUEST
 
-        # generate blog_id
+        # Generate Blog ID
         blog_id = str(uuid.uuid4())
-        # Add a new blog document to Firestore
-        blog_collection = db.collection('blog-content')
-        blog_collection.add({
+
+        # Raw SQL query to insert blog data into the database
+        insert_query = text("""
+            INSERT INTO blogs
+            (blog_id, title, short_description, timestamp, description, image, image_alt)
+            VALUES (:blog_id, :title, :short_description, NOW(), :description, :image, :image_alt)
+        """)
+
+        # Execute the insert query with parameter binding
+        mysql.session.execute(insert_query, {
             'blog_id': blog_id,
             'title': title,
             'short_description': short_description,
-            'timestamp': current_time,
             'description': description,
             'image': image,
-            'image_alt': image_alt,
-            'trigrams_search': trigrams_search
+            'image_alt': image_alt
         })
+        mysql.session.commit()
+
         return jsonify({'message': 'Successfully created a document', 'blog_id_created': blog_id}), status.HTTP_201_CREATED
+
     except Exception as error:
         return jsonify({'error': str(error)}), status.HTTP_500_SERVER_ERROR
 
 
-@blogs.route('/blog/delete/<string:blog_id>', methods=['DELETE'])
+@blogs.route('/blogs/delete/<string:id>', methods=['DELETE'])
 @basic_auth.required
-def delete_blog_by_id(blog_id):
+def delete_blog_by_id(id):
     """Delete a blog by id"""
     try:
-        query = db.collection('blog-content').where('blog_id', '==', blog_id)
-        docs = query.stream()
+        # Raw SQL query to delete the blog by blog_id
+        delete_query = text("DELETE FROM blogs WHERE id = :id")
 
-        deleted_count = 0
-        for doc in docs:
-            doc.reference.delete()
-            deleted_count += 1
+        # Execute the query with parameter binding
+        result = mysql.session.execute(delete_query, {'id': id})
 
-        if deleted_count == 0:
-            raise Exception("No documents found")
+        # Commit the transaction
+        mysql.session.commit()
+
+        # Check if any rows were affected (i.e., whether a blog was deleted)
+        if result.rowcount == 0:
+            raise Exception("No document found")
 
         return jsonify({'message': 'Document deleted successfully'}), status.HTTP_204_NO_CONTENT
 
