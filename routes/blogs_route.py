@@ -12,7 +12,7 @@ blogs = Blueprint('blogs', __name__)
 def validate_token():
     token = request.cookies.get("token")
     coretify_api_url = "https://coretify.vercel.app/auth"
-    
+
     # Send the token to the coretify API for validation
     response = requests.post(coretify_api_url, json={"token": token})
 

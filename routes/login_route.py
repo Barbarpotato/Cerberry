@@ -5,10 +5,11 @@ import os
 
 login = Blueprint('login', __name__)
 
+
 @login.route('/login')
 def login_page():
     """Rendering login html content"""
-    return render_template('/login/index.html', app_token= os.getenv('APP_TOKEN'))
+    return render_template('/login/index.html', app_token=os.getenv('APP_TOKEN'))
 
 
 @login.route('/login_api', methods=['POST'])
@@ -38,7 +39,7 @@ def login_api():
             return jsonify({"message": "Invalid username or password"}), status.HTTP_401_UNAUTHORIZED
 
         token = login_result.get('token')
-        
+
         # Create a response and set the cookie
         response = make_response(redirect(url_for('blogs.blog_create_view')))  # Adjust the redirect here
         response.set_cookie('token', token)  # Set the 'token' cookie
