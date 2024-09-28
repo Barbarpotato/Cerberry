@@ -25,6 +25,7 @@ jobs:
           flake8 main.py  --count --max-complexity=10 --max-line-length=127 --statistics
           flake8 routes/forms_route.py --count --max-complexity=10 --max-line-length=127 --statistics
           flake8 routes/blogs_route.py --count --max-complexity=10 --max-line-length=127 --statistics
+          flake8 routes/login_route.py --count --max-complexity=10 --max-line-length=127 --statistics
 
   docker-build-and-push:
     runs-on: ubuntu-latest
