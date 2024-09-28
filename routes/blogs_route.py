@@ -1,17 +1,44 @@
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for
 import uuid
+import requests
 from sqlalchemy import text
 import status
-from auth import basic_auth
 from main import mysql
 
 blogs = Blueprint('blogs', __name__)
 
 
+# Helper function to validate the token
+def validate_token():
+    token = request.cookies.get("token")
+    coretify_api_url = "https://coretify.vercel.app/auth"
+    
+    # Send the token to the coretify API for validation
+    response = requests.post(coretify_api_url, json={"token": token})
+
+    # If the token is invalid, return an error response
+    if response.status_code != 200:
+        return False, jsonify({"message": "Invalid token"}), status.HTTP_401_UNAUTHORIZED
+
+    return True, None, None
+
+
 @blogs.route('/blogs')
-def just_check():
+def blog_index():
     """Rendering blogs html content"""
     return render_template('/blogs/index.html')
+
+
+@blogs.route('/blog/create/view')
+def blog_create_view():
+    """Rendering blogs html content"""
+
+    # Validate token using the helper function
+    is_valid, error_response, error_status = validate_token()
+    if not is_valid:
+        return redirect(url_for('login.login_page'))
+
+    return render_template('/blogs/create.html')
 
 
 @blogs.route('/blogs/all', methods=['GET'])
@@ -124,11 +151,16 @@ def search_blogs():
         return jsonify({'error': str(error)}), status.HTTP_500_SERVER_ERROR
 
 
-@blogs.route('/blogs/create', methods=['POST'])
-@basic_auth.required
+@blogs.route('/blog/create', methods=['POST'])
 def create_blog():
     """Create a blog"""
     try:
+
+        # Validate token using the helper function
+        is_valid, error_response, error_status = validate_token()
+        if not is_valid:
+            return error_response, error_status
+
         # Get data from request
         data = request.json
         title = data.get('title')
@@ -168,23 +200,28 @@ def create_blog():
         return jsonify({'error': str(error)}), status.HTTP_500_SERVER_ERROR
 
 
-@blogs.route('/blogs/delete/<string:id>', methods=['DELETE'])
-@basic_auth.required
+@blogs.route('/blog/delete/<string:id>', methods=['DELETE'])
 def delete_blog_by_id(id):
     """Delete a blog by id"""
     try:
+
+        # Validate token using the helper function
+        is_valid, error_response, error_status = validate_token()
+        if not is_valid:
+            return error_response, error_status
+
         # Raw SQL query to delete the blog by blog_id
-        delete_query = text("DELETE FROM blogs WHERE id = :id")
+        delete_query = text("DELETE FROM blogs WHERE blog_id = :blog_id")
 
         # Execute the query with parameter binding
-        result = mysql.session.execute(delete_query, {'id': id})
-
-        # Commit the transaction
-        mysql.session.commit()
+        result = mysql.session.execute(delete_query, {'blog_id': id})
 
         # Check if any rows were affected (i.e., whether a blog was deleted)
         if result.rowcount == 0:
-            raise Exception("No document found")
+            return jsonify({'message': 'Blog not found'}), status.HTTP_404_NOT_FOUND
+
+        # Commit the transaction
+        mysql.session.commit()
 
         return jsonify({'message': 'Document deleted successfully'}), status.HTTP_204_NO_CONTENT
 
