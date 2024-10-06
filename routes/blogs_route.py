@@ -118,7 +118,7 @@ def latest_blogs():
             SELECT blog_id, title, short_description, timestamp, description, image, image_alt
             FROM blogs
             ORDER BY timestamp DESC
-            LIMIT 18
+            LIMIT 5
         """)
 
         # Execute the query
