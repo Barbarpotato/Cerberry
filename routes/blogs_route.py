@@ -109,6 +109,41 @@ def get_blog_by_id(blog_id):
         return jsonify({'error': str(error)}), status.HTTP_500_SERVER_ERROR
 
 
+@blogs.route('/blogs/latest', methods=['GET'])
+def latest_blogs():
+    """Get the latest blogs based on the timestamp"""
+    try:
+        # Raw SQL query to fetch the latest blogs ordered by timestamp (newest first)
+        query = text("""
+            SELECT blog_id, title, short_description, timestamp, description, image, image_alt
+            FROM blogs
+            ORDER BY timestamp DESC
+            LIMIT 18
+        """)
+
+        # Execute the query
+        results = mysql.session.execute(query).fetchall()
+
+        # Convert the results to a list of dictionaries
+        latest_blogs = []
+        for row in results:
+            blog = {
+                'blog_id': row[0],
+                'title': row[1],
+                'short_description': row[2],
+                'timestamp': row[3].strftime('%Y-%m-%d %H:%M:%S'),  # Format timestamp
+                'description': row[4],
+                'image': row[5],
+                'image_alt': row[6]
+            }
+            latest_blogs.append(blog)
+
+        return jsonify(latest_blogs), status.HTTP_200_OK
+
+    except Exception as error:
+        return jsonify({'error': str(error)}), status.HTTP_500_SERVER_ERROR
+
+
 @blogs.route('/blogs/search', methods=['GET'])
 def search_blogs():
     """Search for blogs by title using MySQL LIKE"""
